@@ -2,6 +2,7 @@
 
 plugins:
   - babel
+  - react
 
 env:
   node: true
@@ -11,6 +12,8 @@ parser: babel-eslint
 
 extends:
   - 'airbnb-base'
+  - 'plugin:react/recommended'
 
 rules:
   no-console: 0
+  react/prop-types: 0

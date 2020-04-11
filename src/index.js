@@ -1,5 +1,3 @@
-// import app from './app';
+import app from './app.jsx';
 
-// app();
-const f = 32;
-console.log(f);
+app();
