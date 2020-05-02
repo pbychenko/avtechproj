@@ -7,37 +7,16 @@ import 'bootstrap/dist/js/bootstrap.bundle';
 import Card from './Card.jsx';
 import Modal from './Modal.jsx';
 
-
-// import 'bootstrap/dist/css/bootstrap.min.css';
-// import 'bootstrap/dist/js/bootstrap.bundle';
-// // import $ from 'jquery';
-
-// const app = () => {
-//   // ReactDOM.render(
-//   //   <Card />,
-//   //   document.getElementById('test'),
-//   // );
-// };
-
-// // const app = () => {
-// //   $('#exampleModal').on('show.bs.modal', function (event) {
-// //     const modalButton = $(event.relatedTarget);
-// //     const recipient = modalButton.data('whatever');
-// //     const modal = $(this);
-// //     modal.find('.modal-body').text(recipient);
-// //   });
-// // };
-
-
-// export default app;
-
 export default class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       items: [],
       activePictureData: null,
-      // inputValue: '',
+      form: {
+        name: '',
+        comment: '',
+      },
     };
   }
 
@@ -52,16 +31,6 @@ export default class App extends React.Component {
     axios.get(`https://boiling-refuge-66454.herokuapp.com/images/${id}`)
     .then((response) => {
       this.setState({ activePictureData: response.data });
-      // console.log(response.data);
-
-      // $('#exampleModal').on('show.bs.modal', function (event) {
-      //   const modalButton = $(event.relatedTarget);
-      //   // const recipient = modalButton.data('whatever');
-      //   // const modal = $(this);
-      //   // modal.find('.modal-body').text(recipient);
-      // });
-
-      // console.log(response.data);
     });
     
   }
