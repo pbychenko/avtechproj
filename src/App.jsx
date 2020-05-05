@@ -42,13 +42,34 @@ export default class App extends React.Component {
     );
   }
 
+  handleChange = (e) => {
+    const { name, value } = e.target;
+    const { form } = this.state;
+    this.setState({ form: { ...form, [name]: value } });
+  }
+
+  handleSubmit = (e) => {
+    e.preventDefault();
+    const { name, comment } = this.state.form;
+    const id = this.state.activePictureData.id;
+    console.log(id);
+    // const { data } = await axios.post(routes.tasksPath(), { text: inputValue });
+    axios.post(`https://boiling-refuge-66454.herokuapp.com/images/${id}/comments`, {
+      name, comment} )
+    .then(function (response) {
+      console.log(response.status);
+    })
+    this.setState({ form: {name: '', comment: '' } });
+  };
+
   renderModal = () => {
     const data = this.state.activePictureData;
+    const {form} = this.state;
     if (data) {
-      return (<Modal data={data}/>);
+      return (<Modal data={data} onFormChange={this.handleChange} onFormSubmit={this.handleSubmit} formData={form}/>);
     }
     return data;
-  }
+  } 
 
   render() {
 
