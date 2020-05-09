@@ -1,14 +1,11 @@
-// @ts-check
-/* eslint-disable react/prefer-stateless-function */
-
 import React from 'react';
 
 export default class Card extends React.Component {
   render() {
-    const { src, onClick } = this.props;
+    const { src, onClickAction } = this.props;
     return (
-      <div className="card">
-        <div className="card-body" data-toggle="modal" data-target="#exampleModal" onClick={onClick}>
+      <div className="card" onClick={onClickAction}>
+        <div className="card-body" data-toggle="modal" data-target="#exampleModal" >
           <img src={src} className="card-img-top" alt="..."/>
         </div>
       </div>

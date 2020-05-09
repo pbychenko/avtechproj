@@ -1,11 +1,10 @@
 import axios from 'axios';
-import React from 'react';
-
-import $ from 'jquery';
 import 'bootstrap/dist/js/bootstrap.bundle';
-// import ReactDOM from 'react-dom';
+import React from 'react';
 import Card from './Card.jsx';
-import Modal from './Modal.jsx';
+import MyModal from './MyModal.jsx';
+
+const baseUrl = 'https://boiling-refuge-66454.herokuapp.com/images';
 
 export default class App extends React.Component {
   constructor(props) {
@@ -13,6 +12,7 @@ export default class App extends React.Component {
     this.state = {
       items: [],
       activePictureData: null,
+      show: false,
       form: {
         name: '',
         comment: '',
@@ -20,25 +20,21 @@ export default class App extends React.Component {
     };
   }
 
-  componentDidMount() {
-    axios.get('https://boiling-refuge-66454.herokuapp.com/images')
-    .then((response) => {
-      this.setState({ items: response.data });
-    });
+  async componentDidMount() {
+    const res = await axios.get(baseUrl);
+    this.setState({ items: res.data });
   }
 
-  handleClick = (id) => () => {
-    axios.get(`https://boiling-refuge-66454.herokuapp.com/images/${id}`)
-    .then((response) => {
-      this.setState({ activePictureData: response.data });
-    });
-    
+  handleClick = (id) => async () => {
+    const res = await axios.get(`${baseUrl}/${id}`);
+    this.setState({ activePictureData: res.data });
+    this.setState({ show: true });
   }
 
   renderPictures = () => {
     const { items } = this.state;
     return (
-      items.map((el) => <Card key={el.id} src={el.url} onClick={this.handleClick(el.id)}/>)
+      items.map((el) => <Card key={el.id} src={el.url} onClickAction={this.handleClick(el.id)}/>)
     );
   }
 
@@ -48,31 +44,39 @@ export default class App extends React.Component {
     this.setState({ form: { ...form, [name]: value } });
   }
 
-  handleSubmit = (e) => {
+  handleSubmit = async (e) => {
     e.preventDefault();
     const { name, comment } = this.state.form;
-    const id = this.state.activePictureData.id;
+    const { id } = this.state.activePictureData;
     console.log(id);
-    // const { data } = await axios.post(routes.tasksPath(), { text: inputValue });
-    axios.post(`https://boiling-refuge-66454.herokuapp.com/images/${id}/comments`, {
-      name, comment} )
-    .then(function (response) {
-      console.log(response.status);
-    })
-    this.setState({ form: {name: '', comment: '' } });
+    const res = await axios.post(`${baseUrl}/${id}/comments`,
+      { name, comment });
+    console.log(res.status);
+    this.setState({ form: { name: '', comment: '' } });
   };
 
   renderModal = () => {
-    const data = this.state.activePictureData;
-    const {form} = this.state;
-    if (data) {
-      return (<Modal data={data} onFormChange={this.handleChange} onFormSubmit={this.handleSubmit} formData={form}/>);
+    const pictureData = this.state.activePictureData;
+    const { show, form } = this.state;
+    if (pictureData) {
+      return (
+      <MyModal show={show} data={pictureData} onFormChange={this.handleChange}
+       onFormSubmit={this.handleSubmit} formData={form} onHide={this.handleCloseModal}/>
+      );
     }
-    return data;
-  } 
+
+    return pictureData;
+  }
+
+  handleCloseModal = () => {
+    this.setState({ show: false });
+  }
+
+  handleShowModal = () => {
+    this.setState({ show: true });
+  }
 
   render() {
-
     return (
       <div className="container">
         <div className="row">
