@@ -1,8 +1,9 @@
 import axios from 'axios';
-import 'bootstrap/dist/js/bootstrap.bundle';
+import { Jumbotron } from 'react-bootstrap';
 import React from 'react';
 import Card from './Card.jsx';
 import MyModal from './MyModal.jsx';
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 const baseUrl = 'https://boiling-refuge-66454.herokuapp.com/images';
 
@@ -21,8 +22,13 @@ export default class App extends React.Component {
   }
 
   async componentDidMount() {
-    const res = await axios.get(baseUrl);
-    this.setState({ items: res.data });
+    try {
+      const res = await axios.get(baseUrl);
+      this.setState({ items: res.data });
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
   }
 
   handleClick = (id) => async () => {
@@ -48,11 +54,10 @@ export default class App extends React.Component {
     e.preventDefault();
     const { name, comment } = this.state.form;
     const { id } = this.state.activePictureData;
-    console.log(id);
     const res = await axios.post(`${baseUrl}/${id}/comments`,
       { name, comment });
     console.log(res.status);
-    this.setState({ form: { name: '', comment: '' } });
+    this.setState({ form: { name: '', comment: '' }, show: false });
   };
 
   renderModal = () => {
@@ -78,12 +83,17 @@ export default class App extends React.Component {
 
   render() {
     return (
-      <div className="container">
-        <div className="row">
-          {this.renderPictures()}
+      <>
+        <Jumbotron className="text-center">
+          <h1>Album example</h1>
+        </Jumbotron>
+        <div className="container">
+          <div className="row justify-content-center">
+            {this.renderPictures()}
+          </div>
+          {this.renderModal()}
         </div>
-        {this.renderModal()}
-      </div>
+      </>
     );
   }
 }

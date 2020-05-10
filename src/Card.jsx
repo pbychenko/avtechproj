@@ -5,7 +5,7 @@ export default class Card extends React.Component {
     const { src, onClickAction } = this.props;
     return (
       <div className="card" onClick={onClickAction}>
-        <div className="card-body" data-toggle="modal" data-target="#exampleModal" >
+        <div className="card-body">
           <img src={src} className="card-img-top" alt="..."/>
         </div>
       </div>

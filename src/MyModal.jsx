@@ -16,15 +16,14 @@ export default class MyModal extends React.Component {
       <Modal show={show} onHide={onHide} size="lg"
       aria-labelledby="contained-modal-title-vcenter"
       centered>
-        <Modal.Header closeButton>
-          <Modal.Title>Modal heading</Modal.Title>
+        <Modal.Header closeButton className="border-0">
         </Modal.Header>
         <Modal.Body>
-          <div className="card">
+          <div className="card border-0">
             <div className="card-body">
               <div className="row">
                 <div className="container col-sm-8">
-                  <img className="bd-placeholder-img card-img-top" width="100%" src={data.url} />
+                  <img className="bd-placeholder-img card-img-top mb-4" width="100%" src={data.url} />
                   <form onSubmit={onFormSubmit}>
                     <div className="form-group">
                       <input type="text" className="form-control" name="name" onChange={onFormChange} value = {formData.name }/>
@@ -35,10 +34,10 @@ export default class MyModal extends React.Component {
                     <button type="submit" className="btn btn-primary btn-block" width="100%">Submit</button>
                   </form>
                 </div>
-                <ModalComments data={data.comments}/>
+                <ModalComments data={data.comments} />
+              </div>
             </div>
           </div>
-        </div>
         </Modal.Body>
       </Modal>
     );
