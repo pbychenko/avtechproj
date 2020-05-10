@@ -16,11 +16,11 @@ export default class MyModal extends React.Component {
       <Modal show={show} onHide={onHide} size="lg"
       aria-labelledby="contained-modal-title-vcenter"
       centered>
-        <Modal.Header closeButton className="border-0">
+        <Modal.Header closeButton className="border-0 pb-0" >
         </Modal.Header>
-        <Modal.Body>
+        <Modal.Body className="p-0">
           <div className="card border-0">
-            <div className="card-body">
+            <div className="card-body pt-0">
               <div className="row">
                 <div className="container col-sm-8">
                   <img className="bd-placeholder-img card-img-top mb-4" width="100%" src={data.url} />

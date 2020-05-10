@@ -85,7 +85,7 @@ export default class App extends React.Component {
     return (
       <>
         <Jumbotron className="text-center">
-          <h1>Album example</h1>
+          <h1>TEST APP</h1>
         </Jumbotron>
         <div className="container">
           <div className="row justify-content-center">
