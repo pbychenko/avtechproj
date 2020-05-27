@@ -15,6 +15,7 @@ export default class App extends React.Component {
       activePictureData: null,
       requestState: '',
       showModal: false,
+      showErrorBlock: false,
       form: {
         name: '',
         comment: '',
@@ -24,18 +25,29 @@ export default class App extends React.Component {
 
   async componentDidMount() {
     try {
+      this.setState({ requestState: 'processing' });
       const res = await axios.get(baseUrl);
+      this.setState({ requestState: 'success' });
       this.setState({ items: res.data });
     } catch (error) {
-      console.error(error);
+      this.setState({ requestState: 'failed' });
+      this.setState({ showErrorBlock: true });
       throw error;
     }
   }
 
   handleClick = (id) => async () => {
-    const res = await axios.get(`${baseUrl}/${id}`);
-    this.setState({ activePictureData: res.data });
-    this.setState({ show: true });
+    try {
+      this.setState({ requestState: 'processing' });
+      const res = await axios.get(`${baseUrl}/${id}`);
+      this.setState({ requestState: 'success' });
+      this.setState({ activePictureData: res.data });
+      this.setState({ showModal: true });
+    } catch (error) {
+      this.setState({ requestState: 'failed' });
+      this.setState({ showErrorBlock: true });
+      throw error;
+    }
   }
 
   renderPictures = () => {
@@ -55,18 +67,26 @@ export default class App extends React.Component {
     e.preventDefault();
     const { name, comment } = this.state.form;
     const { id } = this.state.activePictureData;
-    const res = await axios.post(`${baseUrl}/${id}/comments`,
-      { name, comment });
-    console.log(res.status);
-    this.setState({ form: { name: '', comment: '' }, show: false });
+    try {
+      this.setState({ requestState: 'processing' });
+      const res = await axios.post(`${baseUrl}/${id}/comments`,
+        { name, comment });
+      this.setState({ requestState: 'success' });
+      this.setState({ form: { name: '', comment: '' }, show: false });
+      console.log(res.status);
+    } catch (error) {
+      this.setState({ requestState: 'failed' });
+      this.setState({ showErrorBlock: true });
+      throw error;
+    }      
   };
 
   renderModal = () => {
     const pictureData = this.state.activePictureData;
-    const { show, form } = this.state;
+    const { showModal, form } = this.state;
     if (pictureData) {
       return (
-      <MyModal show={show} data={pictureData} onFormChange={this.handleChange}
+      <MyModal show={showModal} data={pictureData} onFormChange={this.handleChange}
        onFormSubmit={this.handleSubmit} formData={form} onHide={this.handleCloseModal}/>
       );
     }
@@ -75,11 +95,11 @@ export default class App extends React.Component {
   }
 
   handleCloseModal = () => {
-    this.setState({ show: false });
+    this.setState({ showModal: false });
   }
 
   handleShowModal = () => {
-    this.setState({ show: true });
+    this.setState({ showModal: true });
   }
   
   render() {
@@ -88,13 +108,13 @@ export default class App extends React.Component {
       'justify-content': 'center',
       'align-items': 'center',
       'min-height': '100vh',
-    }; 
-    return (
-      <>
-        {/* <div className="text-center" style = {customStyle}><Spinner  animation="border" style={{width: '13rem', height: '13rem'}}/></div>         */}
-        <Alert variant='info' className="text-center">
-          Something wrong with newtwork please try later
-        </Alert>
+    };
+    const { requestState } = this.state;
+    if (requestState === 'processing') {
+      return (<div className="text-center" style = {customStyle}><Spinner  animation="border" style={{width: '13rem', height: '13rem'}}/></div>);
+    } else if (requestState === 'success') {
+      return (
+        <>
         <Jumbotron className="text-center">
           <h1>TEST APP</h1>
         </Jumbotron>
@@ -105,6 +125,36 @@ export default class App extends React.Component {
           {this.renderModal()}
         </div>
       </>
-    );
+      );
+    }
+    else {
+      return (
+        <>        
+          <Jumbotron className="text-center">
+            <h1>TEST APP</h1>
+          </Jumbotron>
+          <Alert variant='info' className="text-center">
+            Something wrong with newtwork please try later
+          </Alert>
+        </>
+      );
+    }
+    // return (
+    //   <>
+    //     {/* <div className="text-center" style = {customStyle}><Spinner  animation="border" style={{width: '13rem', height: '13rem'}}/></div>         */}
+    //     <Alert variant='info' className="text-center">
+    //       Something wrong with newtwork please try later
+    //     </Alert>
+    //     <Jumbotron className="text-center">
+    //       <h1>TEST APP</h1>
+    //     </Jumbotron>
+    //     <div className="container">
+    //       <div className="row justify-content-center">
+    //         {this.renderPictures()}
+    //       </div>
+    //       {this.renderModal()}
+    //     </div>
+    //   </>
+    // );
   }
 }
