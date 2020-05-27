@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { Jumbotron } from 'react-bootstrap';
+import { Jumbotron, Spinner, Alert } from 'react-bootstrap';
 import React from 'react';
 import Card from './Card.jsx';
 import MyModal from './MyModal.jsx';
@@ -13,7 +13,8 @@ export default class App extends React.Component {
     this.state = {
       items: [],
       activePictureData: null,
-      show: false,
+      requestState: '',
+      showModal: false,
       form: {
         name: '',
         comment: '',
@@ -80,10 +81,20 @@ export default class App extends React.Component {
   handleShowModal = () => {
     this.setState({ show: true });
   }
-
+  
   render() {
+    const customStyle = {
+      display: 'flex',
+      'justify-content': 'center',
+      'align-items': 'center',
+      'min-height': '100vh',
+    }; 
     return (
       <>
+        {/* <div className="text-center" style = {customStyle}><Spinner  animation="border" style={{width: '13rem', height: '13rem'}}/></div>         */}
+        <Alert variant='info' className="text-center">
+          Something wrong with newtwork please try later
+        </Alert>
         <Jumbotron className="text-center">
           <h1>TEST APP</h1>
         </Jumbotron>
