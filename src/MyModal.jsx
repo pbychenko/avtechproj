@@ -15,7 +15,7 @@ export default class MyModal extends React.Component {
     return (
       <Modal show={show} onHide={onHide} size="lg"
       aria-labelledby="contained-modal-title-vcenter"
-      centered>
+      centered animation='true'>
         <Modal.Header closeButton className="border-0 pb-0" >
         </Modal.Header>
         <Modal.Body className="p-0">

@@ -105,9 +105,9 @@ export default class App extends React.Component {
   render() {
     const customStyle = {
       display: 'flex',
-      'justify-content': 'center',
-      'align-items': 'center',
-      'min-height': '100vh',
+      'justifyContent': 'center',
+      'alignItems': 'center',
+      'minHeight': '100vh',
     };
     const { requestState } = this.state;
     if (requestState === 'processing') {
@@ -138,23 +138,6 @@ export default class App extends React.Component {
           </Alert>
         </>
       );
-    }
-    // return (
-    //   <>
-    //     {/* <div className="text-center" style = {customStyle}><Spinner  animation="border" style={{width: '13rem', height: '13rem'}}/></div>         */}
-    //     <Alert variant='info' className="text-center">
-    //       Something wrong with newtwork please try later
-    //     </Alert>
-    //     <Jumbotron className="text-center">
-    //       <h1>TEST APP</h1>
-    //     </Jumbotron>
-    //     <div className="container">
-    //       <div className="row justify-content-center">
-    //         {this.renderPictures()}
-    //       </div>
-    //       {this.renderModal()}
-    //     </div>
-    //   </>
-    // );
+    }    
   }
 }
