@@ -27,11 +27,9 @@ export default class App extends React.Component {
     try {
       this.setState({ requestState: 'processing' });
       const res = await axios.get(baseUrl);
-      this.setState({ requestState: 'success' });
-      this.setState({ items: res.data });
+      this.setState({ requestState: 'success', items: res.data });
     } catch (error) {
-      this.setState({ requestState: 'failed' });
-      this.setState({ showErrorBlock: true });
+      this.setState({ requestState: 'failed', showErrorBlock: true });
       throw error;
     }
   }
@@ -40,12 +38,9 @@ export default class App extends React.Component {
     try {
       this.setState({ requestState: 'processing' });
       const res = await axios.get(`${baseUrl}/${id}`);
-      this.setState({ requestState: 'success' });
-      this.setState({ activePictureData: res.data });
-      this.setState({ showModal: true });
+      this.setState({ requestState: 'success', activePictureData: res.data, showModal: true });
     } catch (error) {
-      this.setState({ requestState: 'failed' });
-      this.setState({ showErrorBlock: true });
+      this.setState({ requestState: 'failed', showErrorBlock: true });
       throw error;
     }
   }
@@ -69,14 +64,10 @@ export default class App extends React.Component {
     const { id } = this.state.activePictureData;
     try {
       this.setState({ requestState: 'processing' });
-      const res = await axios.post(`${baseUrl}/${id}/comments`,
-        { name, comment });
-      this.setState({ requestState: 'success' });
-      this.setState({ form: { name: '', comment: '' }, show: false });
-      console.log(res.status);
+      const res = await axios.post(`${baseUrl}/${id}/comments`, { name, comment });
+      this.setState({ requestState: 'success', form: { name: '', comment: '' }, showModal: false });
     } catch (error) {
-      this.setState({ requestState: 'failed' });
-      this.setState({ showErrorBlock: true });
+      this.setState({ requestState: 'failed', showErrorBlock: true });
       throw error;
     }      
   };
@@ -103,15 +94,20 @@ export default class App extends React.Component {
   }
   
   render() {
-    const customStyle = {
+    const centerStyle = {
       display: 'flex',
-      'justifyContent': 'center',
-      'alignItems': 'center',
-      'minHeight': '100vh',
+      justifyContent: 'center',
+      alignItems: 'center',
+      minHeight: '100vh',
     };
+    const spinnerSizeStyle = {
+      width: '13rem',
+      height: '13rem',
+    };   
     const { requestState } = this.state;
+
     if (requestState === 'processing') {
-      return (<div className="text-center" style = {customStyle}><Spinner  animation="border" style={{width: '13rem', height: '13rem'}}/></div>);
+      return (<div className="text-center" style = {centerStyle}><Spinner  animation="border" style={spinnerSizeStyle} /></div>);
     } else if (requestState === 'success') {
       return (
         <>
