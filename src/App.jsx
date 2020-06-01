@@ -64,12 +64,12 @@ export default class App extends React.Component {
     const { id } = this.state.activePictureData;
     try {
       this.setState({ requestState: 'processing' });
-      const res = await axios.post(`${baseUrl}/${id}/comments`, { name, comment });
+      await axios.post(`${baseUrl}/${id}/comments`, { name, comment });
       this.setState({ requestState: 'success', form: { name: '', comment: '' }, showModal: false });
     } catch (error) {
       this.setState({ requestState: 'failed', showErrorBlock: true });
       throw error;
-    }      
+    }
   };
 
   renderModal = () => {
@@ -92,7 +92,7 @@ export default class App extends React.Component {
   handleShowModal = () => {
     this.setState({ showModal: true });
   }
-  
+
   render() {
     const centerStyle = {
       display: 'flex',
@@ -103,12 +103,13 @@ export default class App extends React.Component {
     const spinnerSizeStyle = {
       width: '13rem',
       height: '13rem',
-    };   
+    };
     const { requestState } = this.state;
 
     if (requestState === 'processing') {
-      return (<div className="text-center" style = {centerStyle}><Spinner  animation="border" style={spinnerSizeStyle} /></div>);
-    } else if (requestState === 'success') {
+      return (<div className="text-center" style = {centerStyle}><Spinner animation="border" style={spinnerSizeStyle} /></div>);
+    }
+    if (requestState === 'success') {
       return (
         <>
         <Jumbotron className="text-center">
@@ -123,17 +124,15 @@ export default class App extends React.Component {
       </>
       );
     }
-    else {
-      return (
-        <>        
-          <Jumbotron className="text-center">
-            <h1>TEST APP</h1>
-          </Jumbotron>
-          <Alert variant='info' className="text-center">
-            Something wrong with newtwork please try later
-          </Alert>
-        </>
-      );
-    }    
+    return (
+      <>
+        <Jumbotron className="text-center">
+          <h1>TEST APP</h1>
+        </Jumbotron>
+        <Alert variant='info' className="text-center">
+          Something wrong with newtwork please try later
+        </Alert>
+      </>
+    );
   }
 }
