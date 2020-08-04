@@ -1,24 +1,18 @@
 import React from 'react';
 import ModalComment from './ModalComment.jsx';
 
-export default class ModalComments extends React.Component {
-  renderComments = () => {
-    const { data } = this.props;
-    if (data.length === 0) {
-      return null;
-    }
-    return (
-      data.map((el) => <ModalComment key={el.id} text={el.text} date={el.date} />)
-    );
+const ModalComments = ({ data }) => {
+  if (!data || data.length === 0) {
+    return null;
   }
 
-  render() {
-    return (
-      <div className="container col-sm-4">
-        <ul className="list-group">
-          {this.renderComments()}
-        </ul>
-      </div>
-    );
-  }
-}
+  return (
+    <div className="container col-sm-4">
+      <ul className="list-group">
+        { data.map((el) => <ModalComment key={el.id} text={el.text} date={el.date} />) }
+      </ul>
+    </div>
+  );
+};
+
+export default ModalComments;
