@@ -126,7 +126,7 @@ export default class App extends React.Component {
   }
 
   handleCloseModal = () => {
-    this.setState({ showModal: false });
+    this.setState({ showModal: false, form: { name: '', comment: '' } });
   }
 
   handleShowModal = () => {
