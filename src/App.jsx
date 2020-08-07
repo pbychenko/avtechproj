@@ -23,16 +23,44 @@ export default class App extends React.Component {
     };
   }
 
-  async componentDidMount() {
-    try {
-      this.setState({ requestState: 'processing' });
-      const res = await axios.get(baseUrl);
-      this.setState({ requestState: 'success', items: res.data });
-    } catch (error) {
-      this.setState({ requestState: 'failed', showErrorBlock: true });
-      throw error;
-    }
+  // async componentDidMount() {
+  //   this.setState(() => ({ requestState: 'processing' }));
+  //   try {
+  //     const res = await axios.get(baseUrl);
+  //     this.setState(() => ({ requestState: 'success', items: res.data }));
+  //   } catch (error) {
+  //     this.setState(() => ({ requestState: 'failed', showErrorBlock: true }));
+  //     throw error;
+  //   }
+  // }
+
+  componentDidMount() {
+    this.setState({ requestState: 'processing' }, () => this.getDataRequest());
   }
+
+  getDataRequest = (id) => {
+    const uri = baseUrl + (id ? `/${id}` : '');
+    // Думаю, лучше показать понимание принципиального момента:
+    // setState() работает асинхронно!
+    // В данном случае это не играет роли,
+    // смена requestState произойдет быстрее, чем придет ответ на запрос.
+    this.setState({ requestState: 'processing' }, async () => {
+      try {
+        const res = await axios.get(uri);
+        this.setState({
+          requestState: 'success',
+          ...(!id && { items: res.data }),
+          ...(id && {
+            activePictureData: res.data,
+            showModal: true,
+          }),
+        });
+      } catch (error) {
+        this.setState({ requestState: 'failed', showErrorBlock: true });
+        throw error;
+      }
+    });
+  };
 
   handleClick = (id) => async () => {
     try {
@@ -73,16 +101,15 @@ export default class App extends React.Component {
   };
 
   renderModal = () => {
-    const pictureData = this.state.activePictureData;
-    const { showModal, form } = this.state;
-    if (pictureData) {
+    const { showModal, form, activePictureData } = this.state;
+    if (activePictureData) {
       return (
-      <MyModal show={showModal} data={pictureData} onFormChange={this.handleChange}
+      <MyModal show={showModal} data={activePictureData} onFormChange={this.handleChange}
        onFormSubmit={this.handleSubmit} formData={form} onHide={this.handleCloseModal}/>
       );
     }
 
-    return pictureData;
+    return null;
   }
 
   handleCloseModal = () => {
@@ -105,9 +132,10 @@ export default class App extends React.Component {
       height: '13rem',
     };
     const { requestState } = this.state;
+    console.log(requestState);
 
     if (requestState === 'processing') {
-      return (<div className="text-center" style = {centerStyle}><Spinner animation="border" style={spinnerSizeStyle} /></div>);
+      return (<div className="text-center" style={centerStyle}><Spinner animation="border" style={spinnerSizeStyle} /></div>);
     }
     if (requestState === 'success') {
       return (

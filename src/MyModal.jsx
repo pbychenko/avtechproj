@@ -2,18 +2,13 @@ import React from 'react';
 import { Modal } from 'react-bootstrap';
 import ModalComments from './ModalComments.jsx';
 
-export default class MyModal extends React.Component {
-  render() {
-    const {
-      show,
-      data,
-      formData,
-      onFormChange,
-      onFormSubmit,
-      onHide,
-    } = this.props;
-    return (
-      <Modal show={show} onHide={onHide} size="lg"
+const MyModal = (props) => {
+  const {
+    show, data, formData, onFormChange, onFormSubmit, onHide,
+  } = props;
+
+  return (
+  <Modal show={show} onHide={onHide} size="lg"
       aria-labelledby="contained-modal-title-vcenter"
       centered animation='true'>
         <Modal.Header closeButton className="border-0 pb-0" >
@@ -39,7 +34,7 @@ export default class MyModal extends React.Component {
             </div>
           </div>
         </Modal.Body>
-      </Modal>
-    );
-  }
-}
+      </Modal>);
+};
+
+export default MyModal;
