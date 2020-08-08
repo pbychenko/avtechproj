@@ -4,10 +4,9 @@ import ModalComments from './ModalComments.jsx';
 
 const MyModal = (props) => {
   const {
-    show, data, formData, onFormChange, onFormSubmit, onHide, //validCommentsState
+    show, data, formData, onFormChange, onFormSubmit, onHide,
   } = props;
-  // console.log(validCommentsState);
-  const isValid = formData.name !== '' && formData.comment !== '';
+  const isValidForm = formData.name !== '' && formData.comment !== '';
 
   return (
   <Modal show={show} onHide={onHide} size="lg"
@@ -28,9 +27,7 @@ const MyModal = (props) => {
                     <div className="form-group">
                       <input type="text" className="form-control" name="comment" onChange={onFormChange} value = {formData.comment }/>
                     </div>
-                    <button type="submit" className="btn btn-primary btn-block" width="100%" disabled={!isValid}>Submit</button>
-                    {/* <button type="submit" className="btn btn-primary btn-block" width="100%" disabled={validCommentsState === 'invalid'}>Submit</button> */}
-                    {/* <button type="submit" className="btn btn-primary btn-block" width="100%" >Submit</button> */}
+                    <button type="submit" className="btn btn-primary btn-block" width="100%" disabled={!isValidForm}>Submit</button>
                   </form>
                 </div>
                 <ModalComments data={data.comments} />

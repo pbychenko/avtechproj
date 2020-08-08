@@ -15,64 +15,34 @@ export default class App extends React.Component {
       activePictureData: null,
       requestState: '',
       showModal: false,
-      showErrorBlock: false,      
+      showErrorBlock: false,
       form: {
         name: '',
         comment: '',
-        // validCommentsState: 'invalid',
       },
     };
   }
 
-  async componentDidMount() {
-    this.setState(() => ({ requestState: 'processing' }));
-    try {
-      const res = await axios.get(baseUrl);
-      this.setState(() => ({ requestState: 'success', items: res.data }));
-    } catch (error) {
-      this.setState(() => ({ requestState: 'failed', showErrorBlock: true }));
-      throw error;
-    }
+  componentDidMount() {
+    this.setState({ requestState: 'processing' }, () => this.getDataRequest());
   }
 
-  // componentDidMount() {
-  //   this.setState({ requestState: 'processing' }, () => this.getDataRequest());
-  // }
-
-  // getDataRequest = (id) => {
-  //   const uri = baseUrl + (id ? `/${id}` : '');
-  //   // Думаю, лучше показать понимание принципиального момента:
-  //   // setState() работает асинхронно!
-  //   // В данном случае это не играет роли,
-  //   // смена requestState произойдет быстрее, чем придет ответ на запрос.
-  //   this.setState({ requestState: 'processing' }, async () => {
-  //     try {
-  //       const res = await axios.get(uri);
-  //       this.setState({
-  //         requestState: 'success',
-  //         ...(!id && { items: res.data }),
-  //         ...(id && {
-  //           activePictureData: res.data,
-  //           showModal: true,
-  //         }),
-  //       });
-  //     } catch (error) {
-  //       this.setState({ requestState: 'failed', showErrorBlock: true });
-  //       throw error;
-  //     }
-  //   });
-  // };
-
-  handleClick = (id) => async () => {
+  getDataRequest = async (id) => {
+    const uri = baseUrl + (id ? `/${id}` : '');
     try {
-      this.setState({ requestState: 'processing' });
-      const res = await axios.get(`${baseUrl}/${id}`);
-      this.setState({ requestState: 'success', activePictureData: res.data, showModal: true });
+      const res = await axios.get(uri);
+      if (id) {
+        this.setState({ requestState: 'success', activePictureData: res.data, showModal: true });
+      } else {
+        this.setState({ requestState: 'success', items: res.data });
+      }
     } catch (error) {
       this.setState({ requestState: 'failed', showErrorBlock: true });
       throw error;
     }
-  }
+  };
+
+  handleClick = (id) => () => this.getDataRequest(id);
 
   renderPictures = () => {
     const { items } = this.state;
@@ -85,14 +55,6 @@ export default class App extends React.Component {
     const { name, value } = e.target;
     const { form } = this.state;
     this.setState({ form: { ...form, [name]: value } });
-    // console.log(form.name);
-    // console.log(form.comment);
-    
-    // if (form.name !== '' && form.comment !== '') {
-    //   this.setState({ form: { ...form, validCommentsState: 'valid'} });
-    // } else {
-    //   this.setState({ form: { ...form, [name]: value, validCommentsState: 'invalid'} });
-    // }
   }
 
   handleSubmit = async (e) => {
@@ -103,7 +65,6 @@ export default class App extends React.Component {
     try {
       this.setState({ requestState: 'processing' });
       await axios.post(`${baseUrl}/${id}/comments`, { name, comment });
-      // this.setState({ requestState: 'success', form: { name: '', comment: '', validCommentsState: 'invalid' }, showModal: false });
       this.setState({ requestState: 'success', form: { name: '', comment: '' }, showModal: false });
     } catch (error) {
       this.setState({ requestState: 'failed', showErrorBlock: true });
@@ -113,12 +74,11 @@ export default class App extends React.Component {
 
   renderModal = () => {
     const { showModal, form, activePictureData } = this.state;
-    // console.log(form.validCommentsState);    
 
     if (activePictureData) {
       return (
       <MyModal show={showModal} data={activePictureData} onFormChange={this.handleChange}
-       onFormSubmit={this.handleSubmit} formData={form} onHide={this.handleCloseModal} validCommentsState={form.validCommentsState}/>
+       onFormSubmit={this.handleSubmit} formData={form} onHide={this.handleCloseModal}/>
       );
     }
 
@@ -145,7 +105,7 @@ export default class App extends React.Component {
       height: '13rem',
     };
     const { requestState } = this.state;
-    // console.log(this.state.form);
+    console.log(requestState);
 
     if (requestState === 'processing') {
       return (<div className="text-center" style={centerStyle}><Spinner animation="border" style={spinnerSizeStyle} /></div>);
