@@ -6,6 +6,16 @@ import MyModal from './MyModal.jsx';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 const baseUrl = 'https://boiling-refuge-66454.herokuapp.com/images';
+const centerStyle = {
+  display: 'flex',
+  justifyContent: 'center',
+  alignItems: 'center',
+  minHeight: '100vh',
+};
+const spinnerSizeStyle = {
+  width: '13rem',
+  height: '13rem',
+};
 
 export default class App extends React.Component {
   constructor(props) {
@@ -24,23 +34,25 @@ export default class App extends React.Component {
   }
 
   componentDidMount() {
-    this.setState({ requestState: 'processing' }, () => this.getDataRequest());
+    this.getDataRequest();
   }
 
   getDataRequest = async (id) => {
     const uri = baseUrl + (id ? `/${id}` : '');
-    try {
-      const res = await axios.get(uri);
-      if (id) {
-        this.setState({ requestState: 'success', activePictureData: res.data, showModal: true });
-      } else {
-        this.setState({ requestState: 'success', items: res.data });
+    this.setState({ requestState: 'processing' }, async () => {
+      try {
+        const res = await axios.get(uri);
+        if (id) {
+          this.setState({ requestState: 'success', activePictureData: res.data, showModal: true });
+        } else {
+          this.setState({ requestState: 'success', items: res.data });
+        }
+      } catch (error) {
+        this.setState({ requestState: 'failed', showErrorBlock: true });
+        throw error;
       }
-    } catch (error) {
-      this.setState({ requestState: 'failed', showErrorBlock: true });
-      throw error;
-    }
-  };
+    });
+  }
 
   handleClick = (id) => () => this.getDataRequest(id);
 
@@ -75,14 +87,16 @@ export default class App extends React.Component {
   renderModal = () => {
     const { showModal, form, activePictureData } = this.state;
 
-    if (activePictureData) {
-      return (
-      <MyModal show={showModal} data={activePictureData} onFormChange={this.handleChange}
-       onFormSubmit={this.handleSubmit} formData={form} onHide={this.handleCloseModal}/>
-      );
-    }
-
-    return null;
+    return (
+      activePictureData && <MyModal
+        show={showModal}
+        data={activePictureData}
+        onFormChange={this.handleChange}
+        onFormSubmit={this.handleSubmit}
+        formData={form}
+        onHide={this.handleCloseModal}
+      />
+    );
   }
 
   handleCloseModal = () => {
@@ -94,45 +108,28 @@ export default class App extends React.Component {
   }
 
   render() {
-    const centerStyle = {
-      display: 'flex',
-      justifyContent: 'center',
-      alignItems: 'center',
-      minHeight: '100vh',
-    };
-    const spinnerSizeStyle = {
-      width: '13rem',
-      height: '13rem',
-    };
     const { requestState } = this.state;
-    console.log(requestState);
 
     if (requestState === 'processing') {
       return (<div className="text-center" style={centerStyle}><Spinner animation="border" style={spinnerSizeStyle} /></div>);
-    }
-    if (requestState === 'success') {
-      return (
-        <>
-        <Jumbotron className="text-center">
-          <h1>TEST APP</h1>
-        </Jumbotron>
-        <div className="container">
-          <div className="row justify-content-center">
-            {this.renderPictures()}
-          </div>
-          {this.renderModal()}
-        </div>
-      </>
-      );
     }
     return (
       <>
         <Jumbotron className="text-center">
           <h1>TEST APP</h1>
         </Jumbotron>
+        {requestState === 'success' ? (
+          <div className="container">
+            <div className="row justify-content-center">
+              {this.renderPictures()}
+            </div>
+            {this.renderModal()}
+          </div>
+        ) : (
         <Alert variant='info' className="text-center">
           Something wrong with newtwork please try later
         </Alert>
+        )}
       </>
     );
   }
