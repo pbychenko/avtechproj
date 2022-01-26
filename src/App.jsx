@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { Jumbotron, Spinner, Alert } from 'react-bootstrap';
-import React from 'react';
+import React,{ useState, useEffect } from 'react';
 import Card from './Card.jsx';
 import MyModal from './MyModal.jsx';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -17,120 +17,156 @@ const spinnerSizeStyle = {
   height: '13rem',
 };
 
-export default class App extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      items: [],
-      activePictureData: null,
-      requestState: '',
-      showModal: false,
-      showErrorBlock: false,
-      form: {
-        name: '',
-        comment: '',
-      },
-    };
-  }
+const App = () => {
+  // constructor(props) {
+  //   super(props);
+  //   this.state = {
+  //     items: [],
+  //     activePictureData: null,
+  //     requestState: '',
+  //     showModal: false,
+  //     showErrorBlock: false,
+  //     form: {
+  //       name: '',
+  //       comment: '',
+  //     },
+  //   };
+  // }
 
-  componentDidMount() {
-    this.getDataRequest();
-  }
+  const [items, setItems] = useState([]);
+  const [activePictureData, setActivePictureData] = useState(null);
+  const [requestState, setRequestState] = useState(null);
+  const [showModal, setShowModal] = useState(false);
+  const [showErrorBlock, setShowErrorBlock] = useState(false);
+  const [form, setForm] = useState({ name: '', comment: '' });
 
-  getDataRequest = async (id) => {
+
+  // componentDidMount() {
+  //   this.getDataRequest();
+  // }
+  const getDataRequest = async (id) => {
     const uri = baseUrl + (id ? `/${id}` : '');
-    this.setState({ requestState: 'processing' }, async () => {
-      try {
-        const res = await axios.get(uri);
-        if (id) {
-          this.setState({ requestState: 'success', activePictureData: res.data, showModal: true });
-        } else {
-          this.setState({ requestState: 'success', items: res.data });
-        }
-      } catch (error) {
-        this.setState({ requestState: 'failed', showErrorBlock: true });
-        throw error;
+    setRequestState('processing');
+    // , async () => {
+    //   console.log('here')
+    try {
+      const res = await axios.get(uri);
+      if (id) {
+        setRequestState('success');
+        setActivePictureData(res.data);
+        setShowModal(true);
+      } else {
+        setRequestState('success');
+        setItems(res.data);
       }
-    });
-  }
+    } catch (error) {
+      setRequestState('failed');
+      setShowErrorBlock(true);
+      throw error;
+    }
+    // });
+  };
 
-  handleClick = (id) => () => this.getDataRequest(id);
+  useEffect(() => {
+    getDataRequest();
+  }, []);
 
-  renderPictures = () => {
-    const { items } = this.state;
-    return (
-      items.map((el) => <Card key={el.id} src={el.url} onClickAction={this.handleClick(el.id)}/>)
-    );
-  }
+  // const getDataRequest = async (id) => {
+  //   const uri = baseUrl + (id ? `/${id}` : '');
+  //   setRequestState({ requestState: 'processing' }, async () => {
+  //     try {
+  //       const res = await axios.get(uri);
+  //       if (id) {
+  //         this.setState({ requestState: 'success', activePictureData: res.data, showModal: true });
+  //       } else {
+  //         this.setState({ requestState: 'success', items: res.data });
+  //       }
+  //     } catch (error) {
+  //       this.setState({ requestState: 'failed', showErrorBlock: true });
+  //       throw error;
+  //     }
+  //   });
+  // };
 
-  handleChange = (e) => {
+  
+
+  const handleClick = (id) => () => getDataRequest(id);
+
+  const renderPictures = () => items.map((el) => <Card key={el.id} src={el.url} onClickAction={handleClick(el.id)}/>);
+
+  const handleChange = (e) => {
     const { name, value } = e.target;
-    const { form } = this.state;
-    this.setState({ form: { ...form, [name]: value } });
-  }
+    // const { form } = this.state;
+    setForm({ ...form, [name]: value });
+    // this.setState({ form: { ...form, [name]: value } });
+  };
 
-  handleSubmit = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    const { name, comment } = this.state.form;
-    const { id } = this.state.activePictureData;
+    const { name, comment } = form;
+    const { id } = activePictureData;
 
     try {
       this.setState({ requestState: 'processing' });
       await axios.post(`${baseUrl}/${id}/comments`, { name, comment });
-      this.setState({ requestState: 'success', form: { name: '', comment: '' }, showModal: false });
+      setRequestState('success');
+      setForm({ name: '', comment: '' });
+      setShowModal(false);
+      // this.setState({ requestState: 'success', form: { name: '', comment: '' }, showModal: false });
     } catch (error) {
-      this.setState({ requestState: 'failed', showErrorBlock: true });
+      setRequestState('failed');
+      setShowErrorBlock(true);
+      // this.setState({ requestState: 'failed', showErrorBlock: true });
       throw error;
     }
   };
 
-  renderModal = () => {
-    const { showModal, form, activePictureData } = this.state;
+  const handleCloseModal = () => {
+    setShowModal(false);
+    setForm({ name: '', comment: '' });
+    // this.setState({ showModal: false, form: { name: '', comment: '' } });
+  };
 
-    return (
-      activePictureData && <MyModal
-        show={showModal}
-        data={activePictureData}
-        onFormChange={this.handleChange}
-        onFormSubmit={this.handleSubmit}
-        formData={form}
-        onHide={this.handleCloseModal}
-      />
-    );
+  // const handleShowModal = () => {
+  //   setShowModal(true);
+  //   // setForm({ name: '', comment: '' });
+  //   // this.setState({ showModal: true });
+  // };
+
+  const renderModal = () => (
+    activePictureData && <MyModal
+      show={showModal}
+      data={activePictureData}
+      onFormChange={handleChange}
+      onFormSubmit={handleSubmit}
+      formData={form}
+      onHide={handleCloseModal}
+    />
+  );
+
+  if (requestState === 'processing') {
+    return (<div className="text-center" style={centerStyle}><Spinner animation="border" style={spinnerSizeStyle} /></div>);
   }
 
-  handleCloseModal = () => {
-    this.setState({ showModal: false, form: { name: '', comment: '' } });
-  }
-
-  handleShowModal = () => {
-    this.setState({ showModal: true });
-  }
-
-  render() {
-    const { requestState } = this.state;
-
-    if (requestState === 'processing') {
-      return (<div className="text-center" style={centerStyle}><Spinner animation="border" style={spinnerSizeStyle} /></div>);
-    }
-    return (
-      <>
-        <Jumbotron className="text-center">
-          <h1>TEST APP</h1>
-        </Jumbotron>
-        {requestState === 'success' ? (
-          <div className="container">
-            <div className="row justify-content-center">
-              {this.renderPictures()}
-            </div>
-            {this.renderModal()}
+  return (
+    <>
+      <Jumbotron className="text-center">
+        <h1>TEST APP</h1>
+      </Jumbotron>
+      {requestState === 'success' ? (
+        <div className="container">
+          <div className="row justify-content-center">
+            {renderPictures()}
           </div>
-        ) : (
-        <Alert variant='info' className="text-center">
-          Something wrong with newtwork please try later
-        </Alert>
-        )}
-      </>
-    );
-  }
-}
+          {renderModal()}
+        </div>
+      ) : (
+      <Alert variant='info' className="text-center">
+        Something wrong with newtwork please try later
+      </Alert>
+      )}
+    </>
+  );
+};
+
+export default App;
