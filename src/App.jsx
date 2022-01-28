@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { Jumbotron, Spinner, Alert } from 'react-bootstrap';
-import React,{ useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import Card from './Card.jsx';
 import MyModal from './MyModal.jsx';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -18,56 +18,69 @@ const spinnerSizeStyle = {
 };
 
 const App = () => {
-  // constructor(props) {
-  //   super(props);
-  //   this.state = {
-  //     items: [],
-  //     activePictureData: null,
-  //     requestState: '',
-  //     showModal: false,
-  //     showErrorBlock: false,
-  //     form: {
-  //       name: '',
-  //       comment: '',
-  //     },
-  //   };
-  // }
-
   const [items, setItems] = useState([]);
   const [activePictureData, setActivePictureData] = useState(null);
   const [requestState, setRequestState] = useState(null);
   const [showModal, setShowModal] = useState(false);
-  const [showErrorBlock, setShowErrorBlock] = useState(false);
+  const [, setShowErrorBlock] = useState(false);
   const [form, setForm] = useState({ name: '', comment: '' });
 
 
-  const getDataRequest = async (id) => {
-    const uri = baseUrl + (id ? `/${id}` : '');
+  const getDataRequest = async () => {
+    // const uri = baseUrl + (id ? `/${id}` : '');
+    const uri = baseUrl;
     setRequestState('processing');
     try {
       const res = await axios.get(uri);
-      if (id) {
-        setRequestState('success');
-        setActivePictureData(res.data);
-        setShowModal(true);
-      } else {
+      // if (id) {
+      //   setRequestState('success');
+      //   setActivePictureData(res.data);
+      //   setShowModal(true);
+      // } else {
         setRequestState('success');
         setItems(res.data);
-      }
+      // }
     } catch (error) {
       setRequestState('failed');
       setShowErrorBlock(true);
       throw error;
     }
-    // });
+  };
+
+  const openCard = async (id) => {
+    const uri = baseUrl + (id ? `/${id}` : '');
+    setRequestState('processing');
+    console.log('openCard', requestState);
+    try {
+      const res = await axios.get(uri);
+      // if (id) {
+        setRequestState('success');
+        setActivePictureData(res.data);
+        setShowModal(true);
+      // } else {
+      //   setRequestState('success');
+      //   setItems(res.data);
+      // }
+    } catch (error) {
+      setRequestState('failed');
+      setShowErrorBlock(true);
+      throw error;
+    }
   };
 
   useEffect(() => {
     getDataRequest();
   }, []);
 
-  const handleClick = (id) => () => getDataRequest(id);
-  const renderPictures = () => items.map((el) => <Card key={el.id} src={el.url} onClickAction={handleClick(el.id)}/>);
+  useEffect(() => {
+    getDataRequest();
+  }, []);
+
+  // const handleClick = (id) => () => getDataRequest(id);
+  const handleClick = (id) => () => openCard(id);
+  const renderPictures = () => (
+    items.map((el) => <Card key={el.id} src={el.url} onClickAction={handleClick(el.id)}/>)
+  );
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -85,11 +98,9 @@ const App = () => {
       setRequestState('success');
       setForm({ name: '', comment: '' });
       setShowModal(false);
-      // this.setState({ requestState: 'success', form: { name: '', comment: '' }, showModal: false });
     } catch (error) {
       setRequestState('failed');
       setShowErrorBlock(true);
-      // this.setState({ requestState: 'failed', showErrorBlock: true });
       throw error;
     }
   };
@@ -97,14 +108,7 @@ const App = () => {
   const handleCloseModal = () => {
     setShowModal(false);
     setForm({ name: '', comment: '' });
-    // this.setState({ showModal: false, form: { name: '', comment: '' } });
   };
-
-  // const handleShowModal = () => {
-  //   setShowModal(true);
-  //   // setForm({ name: '', comment: '' });
-  //   // this.setState({ showModal: true });
-  // };
 
   const renderModal = () => (
     activePictureData && <MyModal
@@ -116,6 +120,7 @@ const App = () => {
       onHide={handleCloseModal}
     />
   );
+  console.log('requestState', requestState);
 
   if (requestState === 'processing') {
     return (<div className="text-center" style={centerStyle}><Spinner animation="border" style={spinnerSizeStyle} /></div>);
