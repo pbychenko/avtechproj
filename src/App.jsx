@@ -41,14 +41,9 @@ const App = () => {
   const [form, setForm] = useState({ name: '', comment: '' });
 
 
-  // componentDidMount() {
-  //   this.getDataRequest();
-  // }
   const getDataRequest = async (id) => {
     const uri = baseUrl + (id ? `/${id}` : '');
     setRequestState('processing');
-    // , async () => {
-    //   console.log('here')
     try {
       const res = await axios.get(uri);
       if (id) {
@@ -71,34 +66,12 @@ const App = () => {
     getDataRequest();
   }, []);
 
-  // const getDataRequest = async (id) => {
-  //   const uri = baseUrl + (id ? `/${id}` : '');
-  //   setRequestState({ requestState: 'processing' }, async () => {
-  //     try {
-  //       const res = await axios.get(uri);
-  //       if (id) {
-  //         this.setState({ requestState: 'success', activePictureData: res.data, showModal: true });
-  //       } else {
-  //         this.setState({ requestState: 'success', items: res.data });
-  //       }
-  //     } catch (error) {
-  //       this.setState({ requestState: 'failed', showErrorBlock: true });
-  //       throw error;
-  //     }
-  //   });
-  // };
-
-  
-
   const handleClick = (id) => () => getDataRequest(id);
-
   const renderPictures = () => items.map((el) => <Card key={el.id} src={el.url} onClickAction={handleClick(el.id)}/>);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    // const { form } = this.state;
     setForm({ ...form, [name]: value });
-    // this.setState({ form: { ...form, [name]: value } });
   };
 
   const handleSubmit = async (e) => {
