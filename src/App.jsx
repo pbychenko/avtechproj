@@ -27,19 +27,12 @@ const App = () => {
 
 
   const getDataRequest = async () => {
-    // const uri = baseUrl + (id ? `/${id}` : '');
     const uri = baseUrl;
     setRequestState('processing');
     try {
       const res = await axios.get(uri);
-      // if (id) {
-      //   setRequestState('success');
-      //   setActivePictureData(res.data);
-      //   setShowModal(true);
-      // } else {
-        setRequestState('success');
-        setItems(res.data);
-      // }
+      setRequestState('success');
+      setItems(res.data);
     } catch (error) {
       setRequestState('failed');
       setShowErrorBlock(true);
@@ -53,24 +46,15 @@ const App = () => {
     console.log('openCard', requestState);
     try {
       const res = await axios.get(uri);
-      // if (id) {
-        setRequestState('success');
-        setActivePictureData(res.data);
-        setShowModal(true);
-      // } else {
-      //   setRequestState('success');
-      //   setItems(res.data);
-      // }
+      setRequestState('success');
+      setActivePictureData(res.data);
+      setShowModal(true);
     } catch (error) {
       setRequestState('failed');
       setShowErrorBlock(true);
       throw error;
     }
   };
-
-  useEffect(() => {
-    getDataRequest();
-  }, []);
 
   useEffect(() => {
     getDataRequest();
