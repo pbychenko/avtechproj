@@ -1,26 +1,15 @@
 import axios from 'axios';
-import { Jumbotron, Spinner, Alert } from 'react-bootstrap';
+import { Jumbotron, Alert } from 'react-bootstrap';
 import React, { useState, useEffect } from 'react';
 import Card from './Card.jsx';
 import MyModal from './MyModal.jsx';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
-const baseUrl = 'https://boiling-refuge-66454.herokuapp.com/images';
-const centerStyle = {
-  display: 'flex',
-  justifyContent: 'center',
-  alignItems: 'center',
-  minHeight: '100vh',
-};
-const spinnerSizeStyle = {
-  width: '13rem',
-  height: '13rem',
-};
+const baseUrl = 'https://boiling-refuge-66454.herokuapp.com/images'
 
 const App = () => {
   const [items, setItems] = useState([]);
   const [activePictureData, setActivePictureData] = useState(null);
-  // const [requestState, setRequestState] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [showErrorBlock, setShowErrorBlock] = useState(false);
   const [form, setForm] = useState({ name: '', comment: '' });
@@ -28,13 +17,10 @@ const App = () => {
 
   const getDataRequest = async () => {
     const uri = baseUrl;
-    // setRequestState('processing');
     try {
       const res = await axios.get(uri);
-      // setRequestState('success');
       setItems(res.data);
     } catch (error) {
-      // setRequestState('failed');
       setShowErrorBlock(true);
       throw error;
     }
@@ -42,17 +28,12 @@ const App = () => {
 
   const openCard = async (id) => {
     const uri = baseUrl + (id ? `/${id}` : '');
-    // setRequestState('processing');
-    // console.log('openCard', requestState);
     try {
       const res = await axios.get(uri);
-      // setRequestState('success');
       setActivePictureData(res.data);
       setShowModal(true);
     } catch (error) {
-      // setRequestState('failed');
       setShowErrorBlock(true);
-      // console.log(error)
       throw error;
     }
   };
@@ -77,13 +58,10 @@ const App = () => {
     const { id } = activePictureData;
 
     try {
-      // setRequestState('processing');
       await axios.post(`${baseUrl}/${id}/comments`, { name, comment });
-      // setRequestState('success');
       setForm({ name: '', comment: '' });
       setShowModal(false);
     } catch (error) {
-      // setRequestState('failed');
       setShowErrorBlock(true);
       throw error;
     }
@@ -104,11 +82,8 @@ const App = () => {
       onHide={handleCloseModal}
     />
   );
-  console.log('requestState');
+  // console.log('requestState');
 
-  // if (requestState === 'processing') {
-  //   return (<div className="text-center" style={centerStyle}><Spinner animation="border" style={spinnerSizeStyle} /></div>);
-  // }
   if (showErrorBlock) {
     return (
       <Alert variant='info' className="text-center">
