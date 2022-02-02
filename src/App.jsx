@@ -20,21 +20,21 @@ const spinnerSizeStyle = {
 const App = () => {
   const [items, setItems] = useState([]);
   const [activePictureData, setActivePictureData] = useState(null);
-  const [requestState, setRequestState] = useState(null);
+  // const [requestState, setRequestState] = useState(null);
   const [showModal, setShowModal] = useState(false);
-  const [, setShowErrorBlock] = useState(false);
+  const [showErrorBlock, setShowErrorBlock] = useState(false);
   const [form, setForm] = useState({ name: '', comment: '' });
 
 
   const getDataRequest = async () => {
     const uri = baseUrl;
-    setRequestState('processing');
+    // setRequestState('processing');
     try {
       const res = await axios.get(uri);
-      setRequestState('success');
+      // setRequestState('success');
       setItems(res.data);
     } catch (error) {
-      setRequestState('failed');
+      // setRequestState('failed');
       setShowErrorBlock(true);
       throw error;
     }
@@ -42,16 +42,17 @@ const App = () => {
 
   const openCard = async (id) => {
     const uri = baseUrl + (id ? `/${id}` : '');
-    setRequestState('processing');
-    console.log('openCard', requestState);
+    // setRequestState('processing');
+    // console.log('openCard', requestState);
     try {
       const res = await axios.get(uri);
-      setRequestState('success');
+      // setRequestState('success');
       setActivePictureData(res.data);
       setShowModal(true);
     } catch (error) {
-      setRequestState('failed');
+      // setRequestState('failed');
       setShowErrorBlock(true);
+      // console.log(error)
       throw error;
     }
   };
@@ -76,13 +77,13 @@ const App = () => {
     const { id } = activePictureData;
 
     try {
-      this.setState({ requestState: 'processing' });
+      // setRequestState('processing');
       await axios.post(`${baseUrl}/${id}/comments`, { name, comment });
-      setRequestState('success');
+      // setRequestState('success');
       setForm({ name: '', comment: '' });
       setShowModal(false);
     } catch (error) {
-      setRequestState('failed');
+      // setRequestState('failed');
       setShowErrorBlock(true);
       throw error;
     }
@@ -103,10 +104,17 @@ const App = () => {
       onHide={handleCloseModal}
     />
   );
-  console.log('requestState', requestState);
+  console.log('requestState');
 
-  if (requestState === 'processing') {
-    return (<div className="text-center" style={centerStyle}><Spinner animation="border" style={spinnerSizeStyle} /></div>);
+  // if (requestState === 'processing') {
+  //   return (<div className="text-center" style={centerStyle}><Spinner animation="border" style={spinnerSizeStyle} /></div>);
+  // }
+  if (showErrorBlock) {
+    return (
+      <Alert variant='info' className="text-center">
+        Something wrong with newtwork please try later
+      </Alert>
+    );
   }
 
   return (
@@ -114,7 +122,7 @@ const App = () => {
       <Jumbotron className="text-center">
         <h1>TEST APP</h1>
       </Jumbotron>
-      {requestState === 'success' ? (
+      {!showErrorBlock ? (
         <div className="container">
           <div className="row justify-content-center">
             {renderPictures()}
