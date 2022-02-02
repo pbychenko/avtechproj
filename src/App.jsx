@@ -60,7 +60,6 @@ const App = () => {
     getDataRequest();
   }, []);
 
-  // const handleClick = (id) => () => getDataRequest(id);
   const handleClick = (id) => () => openCard(id);
   const renderPictures = () => (
     items.map((el) => <Card key={el.id} src={el.url} onClickAction={handleClick(el.id)}/>)
@@ -104,7 +103,7 @@ const App = () => {
       onHide={handleCloseModal}
     />
   );
-  console.log('requestState', requestState);
+  // console.log('requestState', requestState);
 
   if (requestState === 'processing') {
     return (<div className="text-center" style={centerStyle}><Spinner animation="border" style={spinnerSizeStyle} /></div>);
