@@ -103,7 +103,7 @@ const App = () => {
       onHide={handleCloseModal}
     />
   );
-  // console.log('requestState', requestState);
+  console.log('requestState', requestState);
 
   if (requestState === 'processing') {
     return (<div className="text-center" style={centerStyle}><Spinner animation="border" style={spinnerSizeStyle} /></div>);
