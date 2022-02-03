@@ -12,6 +12,8 @@ parser: babel-eslint
 extends:
   - 'airbnb-base'
   - 'plugin:react/recommended'
+  - "plugin:functional/external-recommended"
+  - "plugin:functional/recommended"
 
 rules:
   import/extensions: 0

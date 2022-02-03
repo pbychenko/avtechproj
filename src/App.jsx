@@ -5,7 +5,7 @@ import Card from './Card.jsx';
 import MyModal from './MyModal.jsx';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
-const baseUrl = 'https://boiling-refuge-66454.herokuapp.com/images'
+const baseUrl = 'https://boiling-refuge-66454.herokuapp.com/images';
 
 const App = () => {
   const [items, setItems] = useState([]);
@@ -13,7 +13,6 @@ const App = () => {
   const [showModal, setShowModal] = useState(false);
   const [showErrorBlock, setShowErrorBlock] = useState(false);
   const [form, setForm] = useState({ name: '', comment: '' });
-
 
   const getDataRequest = async () => {
     const uri = baseUrl;
